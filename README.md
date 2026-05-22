@@ -31,7 +31,6 @@ CLI · Python 3.11+ · `pedalboard` · `sounddevice` · `typer` · `rich`
 - [Arquitetura](#-arquitetura)
 - [Testes](#-testes)
 - [Limitações conhecidas](#-limitações-conhecidas)
-- [Roadmap](#-roadmap)
 - [Contribuindo](#-contribuindo)
 - [Créditos](#-créditos)
 - [Licença](#-licença)
@@ -356,14 +355,6 @@ A suíte cobre:
   equivalente.
 
 ---
-
-## Roadmap
-
-- [ ] Hot-reload do `config.yaml` com `watchdog`
-- [ ] Indicador ao vivo de RMS / peak durante `run`
-- [ ] Pacote `pipx`-instalável
-- [ ] Suporte explícito a BlackHole (macOS) na auto-detecção
-- [ ] Modo `process` em lote (diretório → diretório)
 
 > Sugestões são bem-vindas — abra uma **Issue** com a tag `enhancement`.
 
