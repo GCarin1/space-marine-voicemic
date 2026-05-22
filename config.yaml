@@ -1,0 +1,131 @@
+# Space Marine Voice — cadeia de efeitos
+#
+# Editar qualquer valor abaixo e rodar `space-marine run` aplica a nova
+# cadeia. Ordem dos estágios é a do tutorial Adobe Audition e NÃO deve
+# ser alterada — é o que dá o timbre correto.
+
+sample_rate: 44100
+block_size: 256   # ~5.8 ms a 44.1 kHz
+
+# 0a. Voice bandpass — recorta a faixa onde mora a voz humana. Mata o
+# que vaza do PC do usuário (hum de fonte/teclado abaixo de ~100 Hz e
+# chiado eletrônico acima de ~8 kHz) ANTES da cadeia amplificar.
+# Voz inteligível vive em ~100-6000 Hz; LPF em 7500 deixa folga para
+# sibilantes ('s', 'f') sem dar passagem pra ruído de fundo.
+#
+# Ajuste:
+#  - hp_freq: suba (130-150) se ainda chega hum de fonte/grave do PC;
+#    abaixe (80-90) se a voz ficou muito fina.
+#  - lp_freq: abaixe (6500) se chega chiado agudo; suba (9000) se a voz
+#    ficou abafada.
+voice_band:
+  enabled: true
+  hp_freq: 110
+  lp_freq: 7500
+
+# 0b. Noise gate — silencia o mic quando você NÃO está falando.
+# Importante: o gate só fecha em silêncio. Quando você fala, ele abre e
+# tudo passa junto — por isso o voice_band acima é obrigatório se o mic
+# vaza som do PC. Aqui usamos threshold mais agressivo (-38 dB) porque
+# o bandpass já reduziu o sinal medido, então o gate fica mais preciso.
+#
+# Ajuste:
+#  - threshold_db: suba (-30) se ainda passa ruído em silêncio; desça
+#    (-50) se está cortando palavras sussurradas.
+#  - ratio: 10 é gate severo; 4 mais natural.
+#  - attack_ms: 1-5 pra não cortar começo de palavras.
+#  - release_ms: 80-200 pra não cortar respirações/fim de frase.
+noise_gate:
+  enabled: true
+  threshold_db: -38
+  ratio: 10
+  attack_ms: 1
+  release_ms: 100
+
+# 1. Lower Pitch (-1 semitom). PitchShift do pedalboard não preserva
+# formantes; o estágio "formant_compensation" abaixo realça a região
+# vocal pra evitar timbre de "rato gigante".
+#
+# IMPORTANTE: pedalboard.PitchShift bufferiza áudio internamente e só
+# emite samples quando recebe um bloco grande o suficiente. Com o
+# block_size global (256) ele nunca libera nada e a saída fica muda.
+# Por isso há um `realtime_block_size` dedicado: quando
+# `realtime_enabled: true`, o stream usa esse block_size maior em vez
+# do global. 4096 @ 44.1 kHz ≈ 93 ms por bloco, o que coloca a latência
+# total na faixa de ~100–150 ms — perceptível em conversa, mas necessário
+# pra ter o pitch idêntico ao tutorial. Em `space-marine process`
+# (offline) o pitch shift é sempre aplicado, independente desses flags.
+#
+# Atalho: `space-marine run --pitch-shift` liga essa rota sem editar o
+# YAML.
+pitch:
+  semitones: -1
+  realtime_enabled: false
+  realtime_block_size: 4096
+  formant_compensation:
+    freq: 500
+    gain_db: 1.5
+    q: 1.2
+
+# 2. Echo / "Custom Effect" — coração do som de capacete fechado.
+# Preset Shower modificado, aplicado 2x. Cada aplicação inclui o trio
+# de filtros que aproxima a "Successive Echo Equalization" do Audition.
+echo:
+  apply_times: 2
+  delay_ms: 28
+  feedback: 0.6
+  mix: 0.5
+  damping:
+    low_shelf:  { freq: 200,  gain_db: -3 }
+    mid_peak:   { freq: 3000, gain_db: -4 }
+    high_shelf: { freq: 7000, gain_db: -7 }
+
+# 3. Fat Snare — reforço de corpo
+fat_snare:
+  - { freq: 200,  gain_db: 4, q: 1.0 }
+  - { freq: 5000, gain_db: 2, q: 1.2 }
+
+# 4. Destination: Home Theater — simulação de caixa grande
+home_theater:
+  low_shelf:  { freq: 80,    gain_db: 4 }
+  high_shelf: { freq: 10000, gain_db: 2 }
+
+# 5. Boomy Kick — peso de bumbo
+boomy_kick:
+  freq: 70
+  gain_db: 5
+  q: 0.8
+
+# 6. Bright and Punchy — compressão + presença
+bright_and_punchy:
+  compressor:
+    threshold_db: -18
+    ratio: 3.5
+    attack_ms: 5
+    release_ms: 80
+  presence:
+    freq: 4000
+    gain_db: 3
+    q: 1.0
+
+# 7. Possible Bass — reforço de sub-bass
+possible_bass:
+  freq: 120
+  gain_db: 3
+
+# 8. Subtle Clarity — clareza de articulação
+subtle_clarity:
+  freq: 6000
+  gain_db: 2
+  q: 1.5
+
+# 9. DeEsser Light — atenuar sibilância
+deesser:
+  freq: 7000
+  gain_db: -3
+  q: 3.0
+
+# Estágio final — limitador anti-clipping
+limiter:
+  threshold_db: -1
+  release_ms: 60

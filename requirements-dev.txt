@@ -1,0 +1,8 @@
+# Dependências de desenvolvimento (testes).
+# Uso:
+#   pip install -r requirements-dev.txt
+# Inclui o conjunto de runtime via -r.
+
+-r requirements.txt
+
+pytest>=8.0
