@@ -4,13 +4,13 @@
 
 # Space Marine Voice
 
-**Voice changer em tempo real que transforma sua voz em um Astartes de Warhammer 40k.**
+**Real-time voice changer that turns your voice into a Warhammer 40k Astartes.**
 
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![pedalboard](https://img.shields.io/badge/DSP-pedalboard-1DB954.svg)](https://github.com/spotify/pedalboard)
 [![Platform](https://img.shields.io/badge/platform-Windows-0078D6.svg)](https://vb-audio.com/Cable/)
-[![Tests](https://img.shields.io/badge/tests-9%20passing-brightgreen.svg)](#-testes)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](#-licença)
+[![Tests](https://img.shields.io/badge/tests-9%20passing-brightgreen.svg)](#-tests)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](#-license)
 
 CLI · Python 3.11+ · `pedalboard` · `sounddevice` · `typer` · `rich`
 
@@ -18,49 +18,49 @@ CLI · Python 3.11+ · `pedalboard` · `sounddevice` · `typer` · `rich`
 
 ---
 
-## Sumário
+## Table of contents
 
-- [Visão geral](#-visão-geral)
-- [Demo (cadeia de efeitos)](#-demo-cadeia-de-efeitos)
-- [Pré-requisitos](#-pré-requisitos)
-- [Instalação](#-instalação)
-- [Uso](#-uso)
-- [Configurando o Discord (ou OBS, jogos…)](#-configurando-o-discord-ou-obs-jogos)
-- [A cadeia de 9 efeitos](#-a-cadeia-de-9-efeitos)
-- [Personalização (`config.yaml`)](#-personalização-configyaml)
-- [Arquitetura](#-arquitetura)
-- [Testes](#-testes)
-- [Limitações conhecidas](#-limitações-conhecidas)
-- [Contribuindo](#-contribuindo)
-- [Créditos](#-créditos)
-- [Licença](#-licença)
-
----
-
-## Visão geral
-
-`space-marine` é um voice changer em **tempo real** que aplica uma cadeia
-fixa de DSP à sua voz — modelada fielmente sobre o tutorial Adobe Audition
-para som de Astartes (Space Marine 2 / cinematics oficiais) — e roteia o
-áudio processado para um dispositivo virtual (**VB-CABLE**), pronto para
-ser consumido como microfone por Discord, OBS, jogos, Zoom, etc.
-
-> **Um único efeito, fixo.** Sem presets de robô, demônio ou alien.
-> Sem clonagem por IA. Apenas a estética de capacete fechado, voz grave e
-> ressonância metálica.
-
-### Características
-
-- **Baixa latência** — alvo < 30 ms (configurável, default `block_size=256` @ 44.1 kHz ≈ 5.8 ms por bloco)
-- **Cadeia DSP fiel** — 9 estágios + limiter, na ordem exata do tutorial
-- **100% configurável via YAML** — edite e re-rode, sem tocar no código
-- **Auto-detecta o VB-CABLE** — se não estiver instalado, falha com mensagem clara
-- **Testado** — 9 testes cobrindo loader, validação e a cadeia DSP
-- **CLI limpa** — `devices`, `run`, `process`, `show-chain` com `rich`
+- [Overview](#-overview)
+- [Demo (effects chain)](#-demo-effects-chain)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Setting up Discord (or OBS, games…)](#-setting-up-discord-or-obs-games)
+- [The 9-effect chain](#-the-9-effect-chain)
+- [Customization (`config.yaml`)](#-customization-configyaml)
+- [Architecture](#-architecture)
+- [Tests](#-tests)
+- [Known limitations](#-known-limitations)
+- [Contributing](#-contributing)
+- [Credits](#-credits)
+- [License](#-license)
 
 ---
 
-## Demo (cadeia de efeitos)
+## Overview
+
+`space-marine` is a **real-time** voice changer that applies a fixed DSP
+chain to your voice — modeled faithfully on the Adobe Audition tutorial
+for the Astartes sound (Space Marine 2 / official cinematics) — and routes
+the processed audio to a virtual device (**VB-CABLE**), ready to be picked
+up as a microphone by Discord, OBS, games, Zoom, etc.
+
+> **One effect, fixed.** No robot, demon, or alien presets.
+> No AI cloning. Just the aesthetic of a sealed helmet, a deep voice, and
+> metallic resonance.
+
+### Features
+
+- **Low latency** — target < 30 ms (configurable, default `block_size=256` @ 44.1 kHz ≈ 5.8 ms per block)
+- **Faithful DSP chain** — 9 stages + limiter, in the exact order of the tutorial
+- **100% configurable via YAML** — edit and re-run, no code changes
+- **Auto-detects VB-CABLE** — if not installed, fails with a clear message
+- **Tested** — 9 tests covering loader, validation, and the DSP chain
+- **Clean CLI** — `devices`, `run`, `process`, `show-chain` with `rich`
+
+---
+
+## Demo (effects chain)
 
 ```text
 $ space-marine show-chain
@@ -88,217 +88,216 @@ Space Marine chain · config.yaml
 
 ---
 
-## Pré-requisitos
+## Requirements
 
-| Requisito                          | Versão / Origem                                                   |
+| Requirement                        | Version / Source                                                  |
 |------------------------------------|-------------------------------------------------------------------|
-| **Python**                         | 3.11 ou superior                                                  |
-| **Sistema operacional**            | Windows (testado); macOS/Linux funcionam para `process` offline   |
-| **VB-CABLE Virtual Audio Device**  | Grátis · <https://vb-audio.com/Cable/> · **reinicie após instalar** |
-| **PortAudio**                      | Vem com `sounddevice` no Windows; em Linux: `apt install libportaudio2` |
+| **Python**                         | 3.11 or higher                                                    |
+| **Operating system**               | Windows (tested); macOS/Linux work for offline `process`          |
+| **VB-CABLE Virtual Audio Device**  | Free · <https://vb-audio.com/Cable/> · **reboot after install**   |
+| **PortAudio**                      | Ships with `sounddevice` on Windows; on Linux: `apt install libportaudio2` |
 
-> O programa **não instala** o VB-CABLE — só o detecta. Se não encontrar,
-> aborta com mensagem clara apontando para o link de download.
+> The program **does not install** VB-CABLE — it only detects it. If not
+> found, it aborts with a clear message pointing to the download link.
 
 ---
 
-## Instalação
+## Installation
 
 ```bash
 # 1. Clone
 git clone https://github.com/GCarin1/space-marine-voicemic.git
 cd space-marine-voicemic
 
-# 2. (Recomendado) Ambiente virtual
+# 2. (Recommended) Virtual environment
 python -m venv .venv
 # Windows PowerShell:
 .\.venv\Scripts\Activate.ps1
 # Linux/macOS:
 source .venv/bin/activate
 
-# 3. Instale em modo editável (recomendado — registra o comando `space-marine`)
+# 3. Install in editable mode (recommended — registers the `space-marine` command)
 pip install -e .
 
-# 4. (Opcional) Dependências de testes
+# 4. (Optional) Test dependencies
 pip install -e .[dev]
 ```
 
-> Se preferir o estilo `requirements.txt`, há um na raiz do projeto:
+> If you prefer the `requirements.txt` style, there is one at the project root:
 > ```bash
 > pip install -r requirements.txt          # runtime
 > pip install -r requirements-dev.txt      # runtime + pytest
 > ```
-> Note que esse modo **não** registra o comando `space-marine` no PATH; use
-> `python -m space_marine.cli ...` ou prefira `pip install -e .`.
+> Note that this mode **does not** register the `space-marine` command on
+> PATH; use `python -m space_marine.cli ...` or prefer `pip install -e .`.
 
-Após instalar em modo editável, o comando `space-marine` fica disponível no PATH.
+After installing in editable mode, the `space-marine` command becomes available on PATH.
 
 ---
 
-## Uso
+## Usage
 
-### Listar dispositivos de áudio
+### List audio devices
 
 ```bash
 space-marine devices
 ```
 
-Mostra uma tabela com índice, nome, canais de entrada/saída e API de cada
-dispositivo. Use isso para descobrir o índice do seu microfone.
+Shows a table with index, name, input/output channels, and API for each
+device. Use this to find the index of your microphone.
 
-### Rodar em tempo real (caso típico)
+### Run in real time (typical case)
 
 ```bash
 space-marine run
 ```
 
-Auto-detecta seu microfone padrão como **entrada** e o `CABLE Input`
-do VB-CABLE como **saída**. Fale, e a sua voz processada vai para o
-cabo virtual. Pressione `Ctrl-C` para parar.
+Auto-detects your default microphone as **input** and the `CABLE Input`
+of VB-CABLE as **output**. Speak, and your processed voice goes to the
+virtual cable. Press `Ctrl-C` to stop.
 
-### Forçar dispositivos específicos
+### Force specific devices
 
 ```bash
 space-marine run --input 1 --output 7
 ```
 
-Útil se você tem múltiplas interfaces ou quer rotear para um dispositivo
-diferente do VB-CABLE (ex.: para monitorar nos fones diretamente).
+Useful if you have multiple interfaces or want to route to a device
+other than VB-CABLE (e.g., to monitor directly through headphones).
 
-### Processar um arquivo `.wav` offline
+### Process a `.wav` file offline
 
 ```bash
-space-marine process minha_voz.wav minha_voz_space_marine.wav
+space-marine process my_voice.wav my_voice_space_marine.wav
 ```
 
-Aplica a cadeia inteira no arquivo. Excelente para testar configurações
-sem precisar falar ao vivo.
+Applies the entire chain to the file. Great for testing configurations
+without speaking live.
 
-### Inspecionar a cadeia carregada
+### Inspect the loaded chain
 
 ```bash
 space-marine show-chain
 ```
 
-Imprime a árvore de efeitos com todos os parâmetros lidos de
-`config.yaml` — confira o que está prestes a rodar antes de abrir o stream.
+Prints the effects tree with all parameters read from `config.yaml` —
+verify what is about to run before opening the stream.
 
 ### Debug
 
-Em qualquer comando, passe `--debug` para ver o stack trace completo em
-caso de erro. Sem `--debug`, os erros aparecem como mensagens curtas e
-humanas.
+In any command, pass `--debug` to see the full stack trace on error.
+Without `--debug`, errors appear as short, human-friendly messages.
 
 ---
 
-## Configurando o Discord (ou OBS, jogos…)
+## Setting up Discord (or OBS, games…)
 
-Após instalar o VB-CABLE e rodar `space-marine run`:
+After installing VB-CABLE and running `space-marine run`:
 
 1. **Discord** → User Settings → **Voice & Video**
-2. **Input Device** → escolha **`CABLE Output (VB-Audio Virtual Cable)`**
-3. (Opcional) Para **se ouvir** enquanto fala:
-   - Windows: Painel de Som → aba **Gravação** → `CABLE Output` →
-     Propriedades → aba **Ouvir** → marque "Ouvir este dispositivo" →
-     reproduzir através do seu **fone** (nunca dos alto-falantes, vai
-     causar feedback).
+2. **Input Device** → select **`CABLE Output (VB-Audio Virtual Cable)`**
+3. (Optional) To **hear yourself** while speaking:
+   - Windows: Sound Panel → **Recording** tab → `CABLE Output` →
+     Properties → **Listen** tab → check "Listen to this device" →
+     play back through your **headphones** (never speakers, it will
+     cause feedback).
 
-A mesma lógica vale para OBS (Mic/Aux Audio = `CABLE Output`), jogos com
-seleção de mic, Zoom, Google Meet, etc.
+The same logic applies to OBS (Mic/Aux Audio = `CABLE Output`), games
+with mic selection, Zoom, Google Meet, etc.
 
 ---
 
-## A cadeia de 9 efeitos
+## The 9-effect chain
 
-A ordem replica fielmente o tutorial Adobe Audition. Todos os parâmetros
-são editáveis em `config.yaml`.
+The order faithfully replicates the Adobe Audition tutorial. All
+parameters are editable in `config.yaml`.
 
-| #  | Estágio                | DSP                                          | Função                                                         |
+| #  | Stage                  | DSP                                          | Purpose                                                        |
 |----|------------------------|----------------------------------------------|----------------------------------------------------------------|
-| 1  | **Lower Pitch**        | `PitchShift(-1 st)` + peak +1.5 dB @ 500 Hz  | Voz mais grave; realce de formante anti "rato gigante"         |
-| 2  | **Echo x2**            | `Delay(28 ms, fb=0.6, mix=0.5)` + EQ damping | **Coração do som**: ressonância de capacete fechado            |
-| 3  | **Fat Snare**          | Peak +4 dB @ 200 Hz, +2 dB @ 5 kHz           | Reforço de corpo                                               |
-| 4  | **Home Theater**       | LowShelf +4 dB @ 80 Hz, HighShelf +2 dB @ 10 kHz | Simula caixa grande / sub + ar                              |
-| 5  | **Boomy Kick**         | Peak +5 dB @ 70 Hz, q=0.8                    | Peso em frequências de bumbo                                   |
-| 6  | **Bright and Punchy**  | `Compressor(-18 dB, 3.5:1)` + peak +3 dB @ 4 kHz | Compressão + presença vocal                                |
-| 7  | **Possible Bass**      | LowShelf +3 dB @ 120 Hz                      | Reforço de sub-bass                                            |
-| 8  | **Subtle Clarity**     | Peak +2 dB @ 6 kHz, q=1.5                    | Articulação                                                    |
-| 9  | **DeEsser Light**      | Peak -3 dB @ 7 kHz, q=3.0                    | Atenua sibilância                                              |
-| —  | **Limiter**            | `Limiter(threshold=-1 dB)`                   | Trava saída a -1 dBFS — nada estoura                           |
+| 1  | **Lower Pitch**        | `PitchShift(-1 st)` + peak +1.5 dB @ 500 Hz  | Deeper voice; formant boost to avoid the "giant rat" effect    |
+| 2  | **Echo x2**            | `Delay(28 ms, fb=0.6, mix=0.5)` + EQ damping | **Heart of the sound**: sealed-helmet resonance                |
+| 3  | **Fat Snare**          | Peak +4 dB @ 200 Hz, +2 dB @ 5 kHz           | Body reinforcement                                             |
+| 4  | **Home Theater**       | LowShelf +4 dB @ 80 Hz, HighShelf +2 dB @ 10 kHz | Simulates large cabinet / sub + air                        |
+| 5  | **Boomy Kick**         | Peak +5 dB @ 70 Hz, q=0.8                    | Weight in kick-drum frequencies                                |
+| 6  | **Bright and Punchy**  | `Compressor(-18 dB, 3.5:1)` + peak +3 dB @ 4 kHz | Compression + vocal presence                               |
+| 7  | **Possible Bass**      | LowShelf +3 dB @ 120 Hz                      | Sub-bass reinforcement                                         |
+| 8  | **Subtle Clarity**     | Peak +2 dB @ 6 kHz, q=1.5                    | Articulation                                                   |
+| 9  | **DeEsser Light**      | Peak -3 dB @ 7 kHz, q=3.0                    | Attenuates sibilance                                           |
+| —  | **Limiter**            | `Limiter(threshold=-1 dB)`                   | Locks output at -1 dBFS — nothing clips                        |
 
-> **Detalhe sobre o Echo x2:** cada repetição é seguida por um trio
-> low-shelf / mid-peak / high-shelf que aproxima a "Successive Echo
-> Equalization" do preset *Shower* do Audition — escurece as repetições
-> e dá o timbre claustrofóbico de capacete blindado.
+> **About Echo x2:** each repetition is followed by a low-shelf /
+> mid-peak / high-shelf trio that approximates the "Successive Echo
+> Equalization" of Audition's *Shower* preset — it darkens the repeats
+> and gives the claustrophobic timbre of an armored helmet.
 
 ---
 
-## Personalização (`config.yaml`)
+## Customization (`config.yaml`)
 
-Todo o comportamento da cadeia vive no `config.yaml` na raiz do projeto.
-Edite os valores e rode `space-marine run` de novo — não é necessário
-reiniciar nada além do programa.
+All chain behavior lives in `config.yaml` at the project root. Edit
+values and run `space-marine run` again — no need to restart anything
+besides the program itself.
 
-Exemplos:
+Examples:
 
 ```yaml
-# Voz mais grave (cuidado, pode virar caricatura abaixo de -3)
+# Deeper voice (careful, can turn cartoonish below -3)
 pitch:
   semitones: -2
 
-# Echo mais "catedral"
+# More "cathedral" echo
 echo:
   apply_times: 3
   delay_ms: 45
   feedback: 0.65
 
-# Reduzir latência (custa CPU; default 256 já é confortável)
-block_size: 128   # ~2.9 ms por bloco a 44.1 kHz
+# Lower latency (costs CPU; default 256 is comfortable)
+block_size: 128   # ~2.9 ms per block at 44.1 kHz
 ```
 
-Após editar, valide com:
+After editing, validate with:
 
 ```bash
 space-marine show-chain
 ```
 
-Se houver erro no YAML, a mensagem aponta exatamente qual campo está
-faltando ou inválido.
+If the YAML has an error, the message points exactly to the missing or
+invalid field.
 
 ---
 
-## Arquitetura
+## Architecture
 
 ```
 space-marine-voicemic/
-├── config.yaml                  # Parâmetros da cadeia (editável)
-├── prompt.md                    # Prompt original que originou o projeto
-├── memoria.md                   # Diário de desenvolvimento
-├── pyproject.toml               # Pacote + metadados + entry point
-├── requirements.txt             # Dependências de runtime (alternativa ao install -e .)
+├── config.yaml                  # Chain parameters (editable)
+├── prompt.md                    # Original prompt that spawned the project
+├── memoria.md                   # Development diary
+├── pyproject.toml               # Package + metadata + entry point
+├── requirements.txt             # Runtime dependencies (alternative to install -e .)
 ├── requirements-dev.txt         # Runtime + pytest
 ├── LICENSE
 ├── README.md
 ├── src/space_marine/
 │   ├── __init__.py
-│   ├── cli.py                   # Typer + rich — comandos
+│   ├── cli.py                   # Typer + rich — commands
 │   ├── audio_engine.py          # sounddevice.Stream + process_file
 │   ├── effects.py               # build_pedalboard(cfg) → Pedalboard
-│   ├── devices.py               # Detecção de mic e VB-CABLE
-│   └── config.py                # Loader/validator do YAML
+│   ├── devices.py               # Mic and VB-CABLE detection
+│   └── config.py                # YAML loader/validator
 └── tests/
     ├── test_config.py
     └── test_effects.py
 ```
 
-**Fluxo em tempo real:**
+**Real-time flow:**
 
 ```
-[Microfone] → sounddevice.Stream → callback ─┐
-                                             ▼
+[Microphone] → sounddevice.Stream → callback ─┐
+                                              ▼
                               board(indata, sr, reset=False)
-                                             │
-                                             ▼
+                                              │
+                                              ▼
                               sounddevice.Stream → [CABLE Input]
                                                         │
                                                         ▼
@@ -306,91 +305,87 @@ space-marine-voicemic/
                                                   reads CABLE Output
 ```
 
-> O `reset=False` é **crítico**: garante que a cauda do Echo não seja
-> truncada a cada bloco, preservando a ressonância metálica.
+> `reset=False` is **critical**: it ensures the Echo tail is not
+> truncated each block, preserving the metallic resonance.
 
 ---
 
-## Testes
+## Tests
 
 ```bash
 pip install -e .[dev]
 pytest -v
 ```
 
-A suíte cobre:
+The suite covers:
 
-- **`test_config.py`** — YAML malformado dá erro claro; campos
-  obrigatórios ausentes citam o nome do campo; config padrão carrega.
-- **`test_effects.py`** — cadeia preserva nº de samples, RMS > threshold,
-  peak ≤ 1.0 (não clipa), `pitch.semitones=-1` desloca o fundamental
-  do FFT na direção esperada.
-
----
-
-## Limitações conhecidas
-
-- **Pitch shift desativado em realtime por padrão.** `pedalboard.PitchShift`
-  bufferiza áudio internamente e só libera com `reset=True` — comportamento
-  documentado pelo Spotify. Isso o torna inutilizável em streams.
-  Solução adotada: em `space-marine run` o estágio 1 é **pulado**; em
-  `space-marine process` (offline) ele é aplicado normalmente (lá funciona
-  perfeitamente porque o áudio inteiro é alimentado de uma vez). O realce
-  de formante (+1.5 dB @ 500 Hz) é mantido em ambos os modos. Se quiser
-  forçar o pitch shift em realtime, troque `pitch.realtime_enabled: true`
-  no `config.yaml` — preparado para >1 s de silêncio inicial.
-- **Latência depende da hostapi (Windows).** WASAPI dá tipicamente 5–20 ms;
-  DirectSound vai a 200+ ms; MME é o pior caso. O auto-detect prefere
-  WASAPI quando possível. Se rodar com `--input/--output` manuais, escolha
-  índices com API "Windows WASAPI" (rode `space-marine devices`).
-- **Formantes não preservados** pelo `PitchShift` original; o peak filter
-  em 500 Hz compensa parcialmente. Para preservação real seria preciso
-  um vocoder de fase ou um plugin VST externo.
-- **DeEsser aproximado.** Implementado como peak filter estreito de
-  -3 dB @ 7 kHz. Funciona para fala normal; pode não bastar em mics
-  muito sibilantes.
-- **Mono.** A cadeia trabalha em um canal — voz é mono na prática.
-- **VB-CABLE é Windows-only** (oficialmente). macOS pode usar
-  BlackHole ou Loopback; basta apontar `--output` para o índice
-  equivalente.
+- **`test_config.py`** — malformed YAML produces a clear error; missing
+  required fields name the field; the default config loads.
+- **`test_effects.py`** — chain preserves sample count, RMS > threshold,
+  peak ≤ 1.0 (no clipping), `pitch.semitones=-1` shifts the FFT
+  fundamental in the expected direction.
 
 ---
 
-> Sugestões são bem-vindas — abra uma **Issue** com a tag `enhancement`.
+## Known limitations
+
+- **Pitch shift disabled in realtime by default.** `pedalboard.PitchShift`
+  buffers audio internally and only releases it with `reset=True` —
+  behavior documented by Spotify. This makes it unusable in streams.
+  Adopted solution: in `space-marine run`, stage 1 is **skipped**; in
+  `space-marine process` (offline) it is applied normally (it works
+  perfectly there because the entire audio is fed at once). The formant
+  boost (+1.5 dB @ 500 Hz) is kept in both modes. To force pitch shift
+  in realtime, set `pitch.realtime_enabled: true` in `config.yaml` —
+  prepared for >1 s of initial silence.
+- **Latency depends on hostapi (Windows).** WASAPI typically gives 5–20 ms;
+  DirectSound goes to 200+ ms; MME is the worst case. The auto-detect
+  prefers WASAPI when possible. If running with manual `--input/--output`,
+  pick indices with API "Windows WASAPI" (run `space-marine devices`).
+- **Formants are not preserved** by the original `PitchShift`; the 500 Hz
+  peak filter partially compensates. For real preservation you would
+  need a phase vocoder or an external VST plugin.
+- **Approximate DeEsser.** Implemented as a narrow -3 dB peak filter
+  @ 7 kHz. Works for normal speech; may not be enough on very sibilant
+  mics.
+- **Mono.** The chain works on a single channel — voice is mono in
+  practice.
+- **VB-CABLE is Windows-only** (officially). macOS can use BlackHole or
+  Loopback; just point `--output` at the equivalent index.
 
 ---
 
-## Contribuindo
+## Contributing
 
-1. Fork → branch (`feat/minha-feature` ou `fix/algum-bug`)
+1. Fork → branch (`feat/my-feature` or `fix/some-bug`)
 2. `pip install -e .[dev]`
-3. Garanta `pytest -v` passando
-4. Type hints em código novo, docstrings curtas
-5. Pull request descrevendo **o que** mudou e **por quê**
+3. Make sure `pytest -v` passes
+4. Type hints on new code, short docstrings
+5. Pull request describing **what** changed and **why**
 
-### Estilo
+### Style
 
-- **Sem presets extras** (o projeto é deliberadamente um efeito só)
-- **Sem GUI** (CLI por design)
-- **Erros viram mensagens humanas**, stack trace só com `--debug`
-
----
-
-## Créditos
-
-- Cadeia de efeitos adaptada do tutorial **Adobe Audition → Space Marine**
-- Construído sobre [`pedalboard`](https://github.com/spotify/pedalboard) (Spotify)
-- I/O em tempo real via [`sounddevice`](https://python-sounddevice.readthedocs.io/) (PortAudio)
-- Roteamento virtual via [VB-CABLE](https://vb-audio.com/Cable/) (VB-Audio Software)
-- **Warhammer 40,000**, **Space Marine**, **Astartes** são marcas
-  registradas da Games Workshop Ltd. Este projeto é uma obra de fã não
-  oficial, sem afiliação com a Games Workshop nem com a Adobe.
+- **No extra presets** (the project is deliberately a single effect)
+- **No GUI** (CLI by design)
+- **Errors become human messages**, stack trace only with `--debug`
 
 ---
 
-## Licença
+## Credits
 
-[MIT](LICENSE) — use, modifique, distribua. Sem garantias.
+- Effects chain adapted from the **Adobe Audition → Space Marine** tutorial
+- Built on [`pedalboard`](https://github.com/spotify/pedalboard) (Spotify)
+- Real-time I/O via [`sounddevice`](https://python-sounddevice.readthedocs.io/) (PortAudio)
+- Virtual routing via [VB-CABLE](https://vb-audio.com/Cable/) (VB-Audio Software)
+- **Warhammer 40,000**, **Space Marine**, and **Astartes** are registered
+  trademarks of Games Workshop Ltd. This project is an unofficial fan
+  work, with no affiliation to Games Workshop or Adobe.
+
+---
+
+## License
+
+[MIT](LICENSE) — use, modify, distribute. No warranties.
 
 <div align="center">
 
