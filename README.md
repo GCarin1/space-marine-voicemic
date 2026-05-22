@@ -273,8 +273,6 @@ faltando ou inválido.
 ```
 space-marine-voicemic/
 ├── config.yaml                  # Parâmetros da cadeia (editável)
-├── prompt.md                    # Prompt original que originou o projeto
-├── memoria.md                   # Diário de desenvolvimento
 ├── pyproject.toml               # Pacote + metadados + entry point
 ├── requirements.txt             # Dependências de runtime (alternativa ao install -e .)
 ├── requirements-dev.txt         # Runtime + pytest
