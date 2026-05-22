@@ -5,4 +5,4 @@
 
 -r requirements.txt
 
-pytest>=8.0
+pytest
